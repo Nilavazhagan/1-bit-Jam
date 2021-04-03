@@ -10,6 +10,12 @@ public class NPCController : MonoBehaviour
     Transform[] patrolPoints;
 
     bool frozen = false;
+
+    private void Awake()
+    {
+        _instances.Add(this);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +32,27 @@ public class NPCController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(t == 0f)
+        if (!frozen)
+        {
+            Patrol();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (frozen)
+            {
+                UnFreezeMe();
+            }
+            else
+            {
+                FreezeMe();
+            }
+        }
+    }
+
+    void Patrol()
+    {
+        if (t == 0f)
         {
             Debug.Log("Index :: " + index);
 
@@ -34,7 +60,7 @@ public class NPCController : MonoBehaviour
             dest = patrolPoints[index].position;
         }
 
-        if(t >= 1)
+        if (t >= 1)
         {
             transform.position = dest;
             t = 0f;
@@ -52,16 +78,31 @@ public class NPCController : MonoBehaviour
         }
     }
 
-
-    private static List<NPCController> _instances;
-
-    private static void Freeze()
+    public void FreezeMe()
     {
-
+        frozen = true;
     }
 
-    private static void UnFreeze()
+    public void UnFreezeMe()
     {
+        frozen = false;
+    }
 
+    private static List<NPCController> _instances = new List<NPCController>();
+
+    public static void Freeze()
+    {
+        foreach (NPCController npc in _instances)
+        {
+            npc.FreezeMe();
+        }
+    }
+
+    public static void UnFreeze()
+    {
+        foreach (NPCController npc in _instances)
+        {
+            npc.UnFreezeMe();
+        }
     }
 }
