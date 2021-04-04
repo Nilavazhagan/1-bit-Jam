@@ -24,4 +24,18 @@ public class PlayerController : MonoBehaviour
 
         transform.position = newPos;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "NPC")
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+
 }

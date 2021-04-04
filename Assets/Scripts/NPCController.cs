@@ -8,6 +8,8 @@ public class NPCController : MonoBehaviour
     float speed = 5f;
     [SerializeField]
     Transform[] patrolPoints;
+    [SerializeField]
+    float freezeTimeout = 5f;
 
     bool frozen = false;
 
@@ -37,15 +39,19 @@ public class NPCController : MonoBehaviour
             Patrol();
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetMouseButtonDown(0))
         {
-            if (frozen)
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if(hit.collider != null)
             {
-                UnFreezeMe();
-            }
-            else
-            {
-                FreezeMe();
+                if(hit.collider.gameObject == gameObject)
+                {
+                    if (!frozen)
+                    {
+                        FreezeMe();
+                        Invoke("UnFreezeMe", freezeTimeout);
+                    }
+                }
             }
         }
     }
